@@ -96,6 +96,14 @@ class Schedule
    {
       return scheduleDates[index];
    }
+   public static Date getLower()
+   {
+      return lowerBound;
+   }
+   public static Date getUpper()
+   {
+      return upperBound;
+   }
    
    public String getTypeDates(String type)
    {
@@ -225,7 +233,8 @@ class Schedule
             }
          }
          
-         return text;
+         int tempYear = scheduleDates[index].getYear();
+         return scheduleDates[index].getMonth() + "/" + scheduleDates[index].getDay() + "/" + (tempYear % 100) + "\n" + text;
       }
       
       
@@ -301,80 +310,76 @@ class Schedule
   
    public static void main(String[] args) 
    {
-      Date startDate = new Date(7,5,2023);
-      Date endDate = new Date(7,12,2023);
+      Date startDate = new Date(8,28,2023);
+      Date endDate = new Date(5,24,2024);
       setBounds(startDate, endDate);
-      
-      // classes
-      Period math = new Period("math");
-      math.addTime(8,30,10,10,"can", 0);
-      math.addTime(8,30,10,10,"can", 2);
-      math.addTime(8,30,10,10,"can", 6);
-      
-      //Sam
-      Person sam = new Person("Sam");
-      sam.addTime(0,0,12,0,"can", 0);
-      sam.addTime(12,0,24,0,"cant", 0);
-      sam.addTime(0,0,24,0,"cant", 1);
-      sam.addTime(0,0,24,0,"can", 2);
-      sam.addTime(0,0,24,0,"can", 3);
-      sam.addTime(0,0,24,0,"can", 4);
-      sam.addTime(0,0,24,0,"preferNot", 5);
-      sam.addTime(0,0,24,0,"can", 6);
-      sam.addTime(0,0,24,0,"can", 7);
-      
-      //Silas
-      Person silas = new Person("Silas");
-      silas.addTime(9,0,16,0,"can", 0);
-      silas.addTime(0,0,24,0,"can", 1);
-      silas.addTime(0,0,24,0,"preferNot", 2);
-      silas.addTime(0,0,24,0,"preferNot", 3);
-      silas.addTime(0,0,24,0,"cant", 4);
-      silas.addTime(0,0,24,0,"can", 5);
-      silas.addTime(0,0,24,0,"unknown", 6);
-      silas.addTime(0,0,24,0,"can", 7);
-      
-      //Matthew
-      Person matthew = new Person("Matthew");
-      matthew.addTime(0,0,12,0,"preferNot", 0);
-      matthew.addTime(0,0,24,0,"can", 1);
-      matthew.addTime(0,0,24,0,"can", 2);
-      matthew.addTime(0,0,24,0,"can", 3);
-      matthew.addTime(0,0,24,0,"can", 4);
-      matthew.addTime(0,0,24,0,"cant", 5);
-      matthew.addTime(0,0,24,0,"can", 6);
-      matthew.addTime(0,0,24,0,"can", 7);
       
       Schedule schedule = new Schedule("Schedule");
       
+      // classes
+      Period mathMiddle = new Period("5th-8th Virtual Math Class");
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 4; j++)
+         {
+            mathMiddle.addTime(9,00,9,55,"can", j);
+            mathMiddle.addTime(10,00,10,55,"can", j);
+            mathMiddle.addTime(11,00,11,55,"can", j);
+            mathMiddle.addTime(1,00,1,55,"can", j);
+         }
+      }
+      
+      Period mathHigh = new Period("9th-12th Virtual Math Class");
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 4; j++)
+         {
+            mathHigh.addTime(9,00,9,55,"can", j);
+            mathHigh.addTime(10,00,10,55,"can", j);
+            mathHigh.addTime(1,00,1,55,"can", j);
+            mathHigh.addTime(2,00,2,55,"can", j);
+         }
+      }
+      
+      schedule.addPeriod(mathMiddle);
+      schedule.addPeriod(mathHigh);
+      
+      //Sam
+      Person sam = new Person("Sam");
+      
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 7 && j < getLower().compare(getUpper()) + 1; j++)
+         {
+            sam.addTime(0,0,24,0,"can", j);
+         }
+      }
+      
+      //Silas
+      Person silas = new Person("Silas");
+      
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 5 && j < getLower().compare(getUpper()) + 1; j++)
+         {
+            silas.addTime(8,30,14,35,"cant", j);
+            silas.addTime(15,0,24,0,"can", j);
+         }
+         for(int j = i + 5; j < i + 7 && j < getLower().compare(getUpper()) + 1; j++)
+         {
+            silas.addTime(0,0,24,0,"can", j);
+         }
+      }
+      
       schedule.addPerson(sam);
       schedule.addPerson(silas);
-      schedule.addPerson(matthew);
       
-      schedule.addPeriod(math);
-      schedule.findPeriod(math, true);
-      
-      System.out.println("possible math teachers are: " + math.getTeacherNames());
-      
-      System.out.println("");
+      System.out.println(silas);
       
       schedule.findSharedDates();
-      
-      System.out.println(schedule);
-      
-      System.out.println("");
-      
-      System.out.println(schedule.getTypeDates("can"));
-      
-      System.out.println("");
-      
-      int[][] timeNum = {{9, 0}, {12, 0}};
-      System.out.println(schedule.getNumOfType(0, timeNum));
-      
-      System.out.println("");
-      
-      System.out.println(schedule.getPeopleNames());
-
+      System.out.println(schedule.findPeriod(mathMiddle, true));
+      int[][] tempTime = {{15,0},{24,0}};
+      System.out.println(schedule.getNumOfType(0, tempTime));
    }
    
    public void equalizePeople()
@@ -410,9 +415,12 @@ class Schedule
          System.out.println("schedule is empty");
       }
    }
-   public void findPeriod(Period subject, boolean isTeacher)
+   // compares each person in people if they fit period subject, returns a string list of people added
+   public String findPeriod(Period subject, boolean isTeacher)
    {
       equalizePeople();
+      
+      String peopleAdded = "";
       if(people.size() != 0)
       {
          for(int i = 0; i < people.size(); i++)
@@ -433,11 +441,12 @@ class Schedule
                   if(isTeacher)
                   {
                      subject.addTeacher(people.get(i));
+                     peopleAdded += subject.getTeacherName(subject.getTeachers().size() - 1) + " ";
                   }
                   else
                   {
                      subject.addStudent(people.get(i));
-
+                     peopleAdded += subject.getStudentName(subject.getStudents().size() - 1) + " ";
                   }
                }
             }
@@ -445,8 +454,9 @@ class Schedule
       }
       else
       {
-         System.out.println("no people in schedule");
+         return "no people in schedule";
       }
+      return "People added: " + peopleAdded;
    }
    
    // sets teacher to each class that works, returns any problems

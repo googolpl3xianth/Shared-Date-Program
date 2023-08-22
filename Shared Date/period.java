@@ -158,9 +158,17 @@ class Period
    {
       return name;
    }
+   public ArrayList getTeachers()
+   {
+      return teachers;
+   }
    public String getTeacherName()
    {
       return teacher.getName();
+   }
+   public String getTeacherName(int index)
+   {
+      return teachers.get(index).getName();
    }
    public String getTeacherNames()
    {
@@ -175,6 +183,14 @@ class Period
          tempString += " ";
       }
       return tempString;
+   }
+   public ArrayList getStudents()
+   {
+      return students;
+   }
+   public String getStudentName(int index)
+   {
+      return students.get(index).getName();
    }
    public String getStudentNames()
    {

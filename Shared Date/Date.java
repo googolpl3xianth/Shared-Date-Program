@@ -583,7 +583,7 @@ class Date
    }
   
   
-   //returns # days from a and b
+   //returns # days from a and b exclusive
    public int compare(Date b)
    {
       int yearComp = b.year - this.year;
@@ -624,7 +624,7 @@ class Date
   
    public static void main(String[] args) 
    {
-      Date test1 = new Date(1,19,2023);
+      Date test1 = new Date(2,18,2023);
       Date test2 = new Date(2,19,2023);
       
       test1.addTime(1, 01, 2, 05, "can");
@@ -645,7 +645,7 @@ class Date
       System.out.println(test1);
       System.out.println(test2);
       
-      int[][] test = test1.getTimes().get(2);
+      System.out.println(test1.compare(test2));
    }
    
    public static boolean equalizeLoop(Date a, Date b, int index)
@@ -659,7 +659,13 @@ class Date
          }
          else if(index < b.timeSlots.size())
          {
+            if(a.timeSlots.size() <= 0)
+            {
+               a.addTime(0,0,24,0,"unknown");
+            }
+            
             equalizeDateTimes(a, a.timeSlots.size() - 1, b, index);
+            
             return true;
          }
       }
@@ -672,6 +678,10 @@ class Date
          }
          else if(index < a.timeSlots.size())
          {
+            if(b.timeSlots.size() <= 0)
+            {
+               b.addTime(0,0,24,0,"unknown");
+            }
             equalizeDateTimes(a, index, b, b.timeSlots.size() - 1);
             
             return true;
