@@ -24,8 +24,6 @@ class Person
       return text;
    }
   
-  
-  
    //defualt Person
    public Person()
    {
@@ -53,7 +51,6 @@ class Person
          dates[i] = new Date(temp);
       }
    }
-  
    //Assigned Person
    public Person(String newName, int datesTimes[][][], ArrayList<String>[] datesTypes)
    {
@@ -66,11 +63,8 @@ class Person
          temp.addDays(i);
          temp.addTimes(datesTimes[i], datesTypes[i]);
          dates[i] = new Date(temp);
-         
       }
-      
    }
-   
    public Person(Person newPerson, String newName)
    {
       name = newName;
@@ -84,7 +78,6 @@ class Person
          dates[i] = new Date(tempDates[i]);
       }
    }
-  
    public Person(Person newPerson)
    {
       name = newPerson.name;
@@ -99,13 +92,11 @@ class Person
       }
    }
   
-  
    //edit assignment details
    public void changeName(String taskName)
    {
       name = taskName;
    }
-  
    //change type
    public void changeType(int indexDay, int indexType, String newType)
    {
@@ -117,13 +108,12 @@ class Person
       x = X;
       y = Y;
    }*/
-  
+   
    //add times
    public void addTime(int startHr, int startMin, int endHr, int endMin, String newType, int dateIndex)
    {
       dates[dateIndex].addTime(startHr, startMin, endHr, endMin, newType);
    }
-  
   
    // get date
    public int getDay(int index)
@@ -190,7 +180,6 @@ class Person
       System.out.println(schedule);
    }
    
-   
    public void equalizeDates(Person a, Person b)
    {
       for(int i = 0; i < dates.length; i++)
@@ -198,8 +187,6 @@ class Person
          Date.equalizeTimes(a.dates[i], b.dates[i]);
       }
    }
-   
-   
    
    // compares this person with person b at a specific date, returns a ArrayList<String> of types
    public ArrayList<String> comparePeople(Person b, int index)
@@ -228,7 +215,6 @@ class Person
     
       return temp.getTypes();
    }
-   
    public ArrayList<String> comparePeople(Schedule a, int index)
    {
       Date temp = new Date(a.getDate(index));

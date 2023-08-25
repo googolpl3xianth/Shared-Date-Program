@@ -43,9 +43,7 @@ class Schedule
          temp.addDays(i);
          scheduleDates[i] = new Date(temp);
       }
-  }
-  
-  //Assigned Person
+   }
    public Schedule(String newName)
    {
       name = newName;
@@ -59,7 +57,6 @@ class Schedule
          scheduleDates[i] = new Date(temp);
       }
    }
-  
    public Schedule(Person newPerson)
    {
       name = newPerson.getName();
@@ -105,7 +102,189 @@ class Schedule
       return upperBound;
    }
    
-   public String getTypeDates(String type)
+   public void setSchedule(Person newPerson)
+   {
+      int period = lowerBound.compare(upperBound) + 1;
+      
+      Date[] tempDates = newPerson.getDates();
+      scheduleDates = new Date[period];
+      for(int i = 0; i < period; i++)
+      {
+         scheduleDates[i] = new Date(tempDates[i]);
+      }
+   }
+   public void setSchedule(Person newPerson, String newName)
+   {
+      name = newName;
+      int period = lowerBound.compare(upperBound) + 1;
+      
+      Date[] tempDates = newPerson.getDates();
+      scheduleDates = new Date[period];
+      for(int i = 0; i < period; i++)
+      {
+         scheduleDates[i] = new Date(tempDates[i]);
+      }
+   }
+   public void setSchedule(Period newPeriod)
+   {
+      name = newPeriod.getName();
+      int period = lowerBound.compare(upperBound) + 1;
+      
+      Date[] tempDates = newPeriod.getDates();
+      scheduleDates = new Date[period];
+      for(int i = 0; i < period; i++)
+      {
+         scheduleDates[i] = new Date(tempDates[i]);
+      }
+   }
+  
+   public void addPerson(Person newPerson)
+   {
+      people.add(newPerson);
+   }
+   public void addPeriod(Period newPeriod)
+   {
+      classes.add(newPeriod);
+   }
+   
+   public void equalizePeople()
+   {
+      for(int i = 1; i < people.size(); i++)
+      {
+         for(int j = 0; j < people.get(i).getDates().length; j++)
+         {
+            Date.equalizeTimes(people.get(0).getDate(j), people.get(i).getDate(j));
+         }
+      }
+      for(int i = 1; i < people.size() - 1; i++)
+      {
+         for(int j = 0; j < people.get(i).getDates().length; j++)
+         {
+            Date.equalizeTimes(people.get(0).getDate(j), people.get(i).getDate(j));
+         }
+      }
+   } 
+   
+   public int containsPerson(ArrayList<Person> listPeople, Person person) // returns index of person in listPeople, returns -1 if there is no person in listPeople
+   {
+      for(int i = 0; i < listPeople.size(); i++)
+      {
+         if(listPeople.get(i).equals(person))
+         {
+            return i;
+         }
+      }
+      return -1;
+   }
+   
+   public static void main(String[] args) ////////////////////////////////////////////////////////////main////////////////////////////////////////////////////////////////////
+   {
+      Date startDate = new Date(8,28,2023);
+      Date endDate = new Date(5,24,2024);
+      setBounds(startDate, endDate);
+      
+      Schedule schedule = new Schedule("Schedule");
+      
+      // classes
+      Period mathMiddle = new Period("5th-8th Virtual Math Class");
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 4; j++)
+         {
+            mathMiddle.addTime(9,00,9,55,"can", j);
+            mathMiddle.addTime(10,00,10,55,"can", j);
+            mathMiddle.addTime(11,00,11,55,"can", j);
+            mathMiddle.addTime(1,00,1,55,"can", j);
+         }
+      }
+      
+      Period mathHigh = new Period("9th-12th Virtual Math Class");
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 4; j++)
+         {
+            mathHigh.addTime(9,00,9,55,"can", j);
+            mathHigh.addTime(10,00,10,55,"can", j);
+            mathHigh.addTime(1,00,1,55,"can", j);
+            mathHigh.addTime(2,00,2,55,"can", j);
+         }
+      }
+      
+      schedule.addPeriod(mathMiddle);
+      schedule.addPeriod(mathHigh);
+      
+      //Sam
+      Person sam = new Person("Sam");
+      
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 7 && j < getLower().compare(getUpper()) + 1; j++)
+         {
+            sam.addTime(0,0,24,0,"can", j);
+         }
+      }
+      
+      //Silas
+      Person silas = new Person("Silas");
+      
+      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
+      {
+         for(int j = i; j < i + 5 && j < getLower().compare(getUpper()) + 1; j++)
+         {
+            silas.addTime(8,30,14,35,"cant", j);
+            silas.addTime(15,0,24,0,"can", j);
+         }
+         for(int j = i + 5; j < i + 7 && j < getLower().compare(getUpper()) + 1; j++)
+         {
+            silas.addTime(0,0,24,0,"can", j);
+         }
+      }
+      
+      schedule.addPerson(sam);
+      schedule.addPerson(silas);
+      schedule.findSharedDates();
+      
+      System.out.println(schedule.findClassSchedule());
+      
+      System.out.println(mathMiddle);
+      System.out.println();
+      
+      System.out.println(schedule.getTeacherNames());
+      //System.out.println(schedule.findPeriod(mathMiddle, true));
+      //int[][] tempTime = {{15,0},{24,0}};
+      //System.out.println(schedule.getNumOfType(0, tempTime));
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////////////////////// Useful methods to be used in main///////////////////////////////////////////////
+   // set bounds, returns # of days between lower and upper (inclusive)
+   public static int setBounds(Date lower, Date upper)
+   {
+      lowerBound = lower;
+      upperBound = upper;
+      return lower.compare(upper) + 1;
+   }
+   
+   public void findSharedDates()
+   {
+      equalizePeople();
+      if(people.size() != 0)
+      {
+         setSchedule(people.get(0));
+         for(int i = 1; i < people.size(); i++)
+         {
+            for(int j = 0; j < scheduleDates.length; j++)
+            {
+               scheduleDates[j].changeTypes(people.get(i).comparePeople(this, j));
+            }
+         }
+      }
+      else
+      {
+         System.out.println("schedule is empty");
+      }
+   }
+   
+   public String getTypeDates(String type) // searches people for dates with type, returns date with time
    {
       findSharedDates();
       String schedule = "";
@@ -241,7 +420,7 @@ class Schedule
       return "no people in list";
    }
    
-   public String getPeopleNames()
+   public String getPeopleNames() // returns the name of each Person in people
    {
       String tempString = "";
       for(int i = 0; i < people.size(); i++)
@@ -255,167 +434,17 @@ class Schedule
       return "People in Schedule: " + tempString;
    }
    
-   public void setSchedule(Person newPerson)
+   public String getTeacherNames() // returns the name of each teacher for each class
    {
-      int period = lowerBound.compare(upperBound) + 1;
-      
-      Date[] tempDates = newPerson.getDates();
-      scheduleDates = new Date[period];
-      for(int i = 0; i < period; i++)
+      String tempString = "";
+      for(int i = 0; i < classes.size(); i++)
       {
-         scheduleDates[i] = new Date(tempDates[i]);
+         tempString += "Class: " + classes.get(i).getName() + " Teacher: " + classes.get(i).getTeacherName() + "\n";
       }
-   }
-   public void setSchedule(Person newPerson, String newName)
-   {
-      name = newName;
-      int period = lowerBound.compare(upperBound) + 1;
-      
-      Date[] tempDates = newPerson.getDates();
-      scheduleDates = new Date[period];
-      for(int i = 0; i < period; i++)
-      {
-         scheduleDates[i] = new Date(tempDates[i]);
-      }
-   }
-   public void setSchedule(Period newPeriod)
-   {
-      name = newPeriod.getName();
-      int period = lowerBound.compare(upperBound) + 1;
-      
-      Date[] tempDates = newPeriod.getDates();
-      scheduleDates = new Date[period];
-      for(int i = 0; i < period; i++)
-      {
-         scheduleDates[i] = new Date(tempDates[i]);
-      }
-   }
-  
-   public void addPerson(Person newPerson)
-   {
-      people.add(newPerson);
-   }
-   public void addPeriod(Period newPeriod)
-   {
-      classes.add(newPeriod);
-   }
-  
-   // set bounds, returns # of days between lower and upper (inclusive)
-   public static int setBounds(Date lower, Date upper)
-   {
-      lowerBound = lower;
-      upperBound = upper;
-      return lower.compare(upper) + 1;
-   }
-  
-   public static void main(String[] args) 
-   {
-      Date startDate = new Date(8,28,2023);
-      Date endDate = new Date(5,24,2024);
-      setBounds(startDate, endDate);
-      
-      Schedule schedule = new Schedule("Schedule");
-      
-      // classes
-      Period mathMiddle = new Period("5th-8th Virtual Math Class");
-      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
-      {
-         for(int j = i; j < i + 4; j++)
-         {
-            mathMiddle.addTime(9,00,9,55,"can", j);
-            mathMiddle.addTime(10,00,10,55,"can", j);
-            mathMiddle.addTime(11,00,11,55,"can", j);
-            mathMiddle.addTime(1,00,1,55,"can", j);
-         }
-      }
-      
-      Period mathHigh = new Period("9th-12th Virtual Math Class");
-      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
-      {
-         for(int j = i; j < i + 4; j++)
-         {
-            mathHigh.addTime(9,00,9,55,"can", j);
-            mathHigh.addTime(10,00,10,55,"can", j);
-            mathHigh.addTime(1,00,1,55,"can", j);
-            mathHigh.addTime(2,00,2,55,"can", j);
-         }
-      }
-      
-      schedule.addPeriod(mathMiddle);
-      schedule.addPeriod(mathHigh);
-      
-      //Sam
-      Person sam = new Person("Sam");
-      
-      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
-      {
-         for(int j = i; j < i + 7 && j < getLower().compare(getUpper()) + 1; j++)
-         {
-            sam.addTime(0,0,24,0,"can", j);
-         }
-      }
-      
-      //Silas
-      Person silas = new Person("Silas");
-      
-      for(int i = 0; i < getLower().compare(getUpper()) + 1; i += 7)
-      {
-         for(int j = i; j < i + 5 && j < getLower().compare(getUpper()) + 1; j++)
-         {
-            silas.addTime(8,30,14,35,"cant", j);
-            silas.addTime(15,0,24,0,"can", j);
-         }
-         for(int j = i + 5; j < i + 7 && j < getLower().compare(getUpper()) + 1; j++)
-         {
-            silas.addTime(0,0,24,0,"can", j);
-         }
-      }
-      
-      schedule.addPerson(sam);
-      schedule.addPerson(silas);
-      
-      System.out.println(silas);
-      
-      schedule.findSharedDates();
-      System.out.println(schedule.findPeriod(mathMiddle, true));
-      int[][] tempTime = {{15,0},{24,0}};
-      System.out.println(schedule.getNumOfType(0, tempTime));
+      return tempString;
    }
    
-   public void equalizePeople()
-   {
-      for(int k = 0; k < 2; k++)
-      {
-         for(int i = 1; i < people.size(); i++)
-         {
-            for(int j = 0; j < people.get(i).getDates().length; j++)
-            {
-               Date.equalizeTimes(people.get(0).getDate(j), people.get(i).getDate(j));
-            }
-         }
-      }
-   } 
-     
-   public void findSharedDates()
-   {
-      equalizePeople();
-      if(people.size() != 0)
-      {
-         setSchedule(people.get(0));
-         for(int i = 1; i < people.size(); i++)
-         {
-            for(int j = 0; j < scheduleDates.length; j++)
-            {
-               scheduleDates[j].changeTypes(people.get(i).comparePeople(this, j));
-            }
-         }
-      }
-      else
-      {
-         System.out.println("schedule is empty");
-      }
-   }
-   // compares each person in people if they fit period subject, returns a string list of people added
+   // compares each person in people if they fit period subject and adds them to the period if they fit, returns a string list of people added
    public String findPeriod(Period subject, boolean isTeacher)
    {
       equalizePeople();
@@ -462,6 +491,38 @@ class Schedule
    // sets teacher to each class that works, returns any problems
    public String findClassSchedule()
    {
-      return "";
+      ArrayList<Person> tempPeople = new ArrayList<Person> (people);
+      ArrayList<Person> tempPerson = new ArrayList<Person>();
+      int tempInt;
+      for(Period p : classes)
+      {
+         p.clearTeacher();
+         findPeriod(p, true);
+         tempInt = containsPerson(tempPeople, p.getTeacher(0));
+         if(p.getTeachers().size() == 1 && tempInt != -1)
+         {
+            tempPeople.remove(tempInt);
+            p.setTeacher(0);
+         }
+      }
+      for(int i = 0; i < classes.size(); i++)
+      {
+         for(Period p : classes)
+         {
+            tempPerson = p.findSharedPeople(tempPeople, people);
+            if(p.getTeacher() != null && tempPerson.size() == 1)
+            {
+               tempPeople.remove(containsPerson(tempPeople, tempPerson.get(0)));
+               p.setTeacher(tempPerson.get(0));
+            }
+         }
+      }
+      String tempString = "";
+      
+      for(int i = 0; i < tempPeople.size(); i++)
+      {
+         tempString += tempPeople.get(i).getName() + " ";
+      }
+      return "People without a class: " + tempString;
    }
 }
